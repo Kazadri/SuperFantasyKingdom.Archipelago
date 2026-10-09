@@ -23,9 +23,9 @@ def set_rules(world: "SFKWorld"):
     add_rule(world.multiworld.get_entrance("Menu -> Undead", player),
              lambda state: state.has("Undead", player))
 
-    for location in sfk_building_locations.keys():
-        add_rule(world.multiworld.get_location(location, player),
-                 lambda state: state.has(location, player))
+    for loc_name in sfk_building_locations:
+        add_rule(world.multiworld.get_location(loc_name, player),
+                 lambda state, n=loc_name: state.has(n, player))
 
     # Victory condition rule!
     world.multiworld.completion_condition[player] = lambda state: state.has("HumanVictory", player) and state.has("UndeadVictory", player)
