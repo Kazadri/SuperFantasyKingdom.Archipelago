@@ -131,6 +131,12 @@ sfk_building_items = {
     "Portal":ItemData(BASE_BUILDING_ID+17, ItemClassification.progression),
     "Bakery":ItemData(BASE_BUILDING_ID+18, ItemClassification.progression),
     "Elemental":ItemData(BASE_BUILDING_ID+19, ItemClassification.progression),
+    "Geologist hunt": ItemData(BASE_BUILDING_ID+27, ItemClassification.progression),
+    "Decoration": ItemData(BASE_BUILDING_ID+30, ItemClassification.progression),
+    "Coins": ItemData(BASE_BUILDING_ID+32, ItemClassification.progression),
+    "Forager": ItemData(BASE_BUILDING_ID+35, ItemClassification.progression),
+    "Firsherhut": ItemData(BASE_BUILDING_ID+36, ItemClassification.progression),
+    "Monument": ItemData(BASE_BUILDING_ID+100, ItemClassification.progression),
 
     # Useful items
     # "A good friend": ItemData(20050004, ItemClassification.useful),
