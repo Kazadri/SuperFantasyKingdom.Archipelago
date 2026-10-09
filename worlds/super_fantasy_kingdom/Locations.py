@@ -7,6 +7,7 @@ if TYPE_CHECKING:
     from . import SFKWorld
 
 BASE_BUILDING_ID = 1_000_000
+BASE_DAY_ID = 1_001_000
 
 def did_include_extra_locations(world: "SFKWorld") -> bool:
     return bool(world.options.ExtraLocations)
@@ -74,6 +75,43 @@ sfk_building_locations = {
     "Portal": LocData(BASE_BUILDING_ID+17, "Human"),
     "Bakery": LocData(BASE_BUILDING_ID+18, "Human"),
     "Elemental": LocData(BASE_BUILDING_ID+19, "Human"),
+    "Geologist hunt": LocData(BASE_BUILDING_ID+27, "Human"),
+    "Decoration": LocData(BASE_BUILDING_ID+30, "Human"),
+    "Coins": LocData(BASE_BUILDING_ID+32, "Human"),
+    "Forager": LocData(BASE_BUILDING_ID+35, "Human"),
+    "Firsherhut": LocData(BASE_BUILDING_ID+36, "Human"),
+    "Monument": LocData(BASE_BUILDING_ID+100, "Human"),
+}
+
+sfk_day_complete_locations = {
+    "Day 1": LocData(BASE_DAY_ID+1, "Human"),
+    "Day 2": LocData(BASE_DAY_ID+2, "Human"),
+    "Day 3": LocData(BASE_DAY_ID+3, "Human"),
+    "Day 4": LocData(BASE_DAY_ID+4, "Human"),
+    "Day 5": LocData(BASE_DAY_ID+5, "Human"),
+    "Day 6": LocData(BASE_DAY_ID+6, "Human"),
+    "Day 7": LocData(BASE_DAY_ID+7, "Human"),
+    "Day 8": LocData(BASE_DAY_ID+8, "Human"),
+    "Day 9": LocData(BASE_DAY_ID+9, "Human"),
+    "Day 10": LocData(BASE_DAY_ID+10, "Human"),
+    "Day 11": LocData(BASE_DAY_ID+11, "Human"),
+    "Day 12": LocData(BASE_DAY_ID+12, "Human"),
+    "Day 13": LocData(BASE_DAY_ID+13, "Human"),
+    "Day 14": LocData(BASE_DAY_ID+14, "Human"),
+    "Day 15": LocData(BASE_DAY_ID+15, "Human"),
+    "Day 16": LocData(BASE_DAY_ID+16, "Human"),
+    "Day 17": LocData(BASE_DAY_ID+17, "Human"),
+    "Day 18": LocData(BASE_DAY_ID+18, "Human"),
+    "Day 19": LocData(BASE_DAY_ID+19, "Human"),
+    "Day 20": LocData(BASE_DAY_ID+20, "Human"),
+    "Day 21": LocData(BASE_DAY_ID+21, "Human"),
+    "Day 22": LocData(BASE_DAY_ID+22, "Human"),
+    "Day 23": LocData(BASE_DAY_ID+23, "Human"),
+    "Day 24": LocData(BASE_DAY_ID+24, "Human"),
+    "Day 25": LocData(BASE_DAY_ID+25, "Human"),
+    "Day 26": LocData(BASE_DAY_ID+26, "Human"),
+    "Day 27": LocData(BASE_DAY_ID+27, "Human"),
+    "Day 28": LocData(BASE_DAY_ID+28, "Human"),
 }
 
 extra_locations = {
@@ -90,6 +128,7 @@ event_locations = {
 # But important to note
 location_table = {
     **sfk_building_locations,
+    **sfk_day_complete_locations,
     **extra_locations,
     **event_locations,
 }
