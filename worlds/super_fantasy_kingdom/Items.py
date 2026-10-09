@@ -37,11 +37,17 @@ def create_itempool(world: "SFKWorld") -> List[Item]:
         else:
             itempool.append(create_item(world, chapter))
 
+    for name in item_table:
+        if name == "HumanVictory" or name == "UndeadVictory" or name in sfk_precollected_items:
+            continue
+        itempool.append(create_item(world, name))
+
     # It's up to you and how you want things organized but I like to deal with victory here
     # This creates your win item and then places it at the "location" where you win
-    victory = create_item(world, "Victory")
-    world.multiworld.get_location("HumanVictory", world.player).place_locked_item(victory)
-    world.multiworld.get_location("UndeadVictory", world.player).place_locked_item(victory)
+    humanVictory = create_item(world, "HumanVictory")
+    undeadVictory = create_item(world, "UndeadVictory")
+    world.multiworld.get_location("HumanVictory", world.player).place_locked_item(humanVictory)
+    world.multiworld.get_location("UndeadVictory", world.player).place_locked_item(undeadVictory)
 
     # Then junk items are made
     # Check out the create_junk_items function for more details
@@ -103,7 +109,10 @@ def create_junk_items(world: "SFKWorld", count: int) -> List[Item]:
 
     return junk_pool
 
-
+sfk_geneal_items = {
+    "HumanVictory": ItemData(22050007, ItemClassification.progression),
+    "UndeadVictory": ItemData(22050008, ItemClassification.progression),
+}
 
 sfk_precollected_items = {
     "Tavern":ItemData(BASE_BUILDING_ID+6, ItemClassification.progression),
@@ -140,9 +149,6 @@ sfk_building_items = {
 
     # Useful items
     # "A good friend": ItemData(20050004, ItemClassification.useful),
-
-    # Victory is added here since in this organization it needs to be in the default item pool
-    "Victory": ItemData(20050007, ItemClassification.progression)
 }
 
 # I like to split up the items so that its easier to look at and since sometimes you only need to look at one specific type of list
@@ -172,6 +178,7 @@ junk_weights = {
 # This makes a really convenient list of all the other dictionaries
 # (fun fact: {} is a dictionary)
 item_table = {
+    **sfk_geneal_items,
     **sfk_precollected_items,
     **sfk_building_items,
     **sfk_chapters,

@@ -9,6 +9,7 @@ from .Items import create_item, create_itempool, item_table, sfk_precollected_it
 from .Options import SFKOptions
 from .Regions import create_regions
 from .Types import ChapterType, chapter_type_to_name
+from .Rules import set_rules as apply_rules
 
 
 # This is where you setup the page on the site!
@@ -96,6 +97,9 @@ class SFKWorld(World):
         }
 
         return slot_data
+
+    def set_rules(self):
+        apply_rules(self)
 
     # These are used by AP to add and remove items from the player. You can probably just leave them alone
     def collect(self, state: "CollectionState", item: "Item") -> bool:

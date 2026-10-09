@@ -1,5 +1,6 @@
 ﻿from worlds.generic.Rules import add_rule
 from typing import TYPE_CHECKING
+from .Locations import sfk_building_locations
 
 if TYPE_CHECKING:
     from . import SFKWorld
@@ -22,5 +23,9 @@ def set_rules(world: "SFKWorld"):
     add_rule(world.multiworld.get_entrance("Menu -> Undead", player),
              lambda state: state.has("Undead", player))
 
+    for location in sfk_building_locations.keys():
+        add_rule(world.multiworld.get_location(location, player),
+                 lambda state: state.has(location, player))
+
     # Victory condition rule!
-    world.multiworld.completion_condition[player] = lambda state: state.has("Victory", player)
+    world.multiworld.completion_condition[player] = lambda state: state.has("HumanVictory", player) and state.has("UndeadVictory", player)
