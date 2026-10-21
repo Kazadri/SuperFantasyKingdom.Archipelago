@@ -4,7 +4,7 @@
 from BaseClasses import Item, ItemClassification
 
 from .Types import ItemData, ChapterType, SFKItem, chapter_type_to_name
-from .Locations import get_total_locations
+from .Locations import get_total_locations, BASE_BUILDING_ID
 from typing import List, Dict, TYPE_CHECKING
 
 # This is just making sure nothing gets confused dw about what its doing exactly
@@ -146,6 +146,23 @@ sfk_building_items = {
     "Forager": ItemData(BASE_BUILDING_ID+35, ItemClassification.progression),
     "Firsherhut": ItemData(BASE_BUILDING_ID+36, ItemClassification.progression),
     "Monument": ItemData(BASE_BUILDING_ID+100, ItemClassification.progression),
+    "WorldWood":ItemData(BASE_BUILDING_ID+301, ItemClassification.progression),
+    "WorldStone":ItemData(BASE_BUILDING_ID+302, ItemClassification.progression),
+    "WorldWheat":ItemData(BASE_BUILDING_ID+303, ItemClassification.progression),
+    "WorldOre":ItemData(BASE_BUILDING_ID+304, ItemClassification.progression),
+    "WorldHunter":ItemData(BASE_BUILDING_ID+306, ItemClassification.progression),
+    "WorldBanish":ItemData(BASE_BUILDING_ID+307, ItemClassification.progression),
+    "WorldDifficulty":ItemData(BASE_BUILDING_ID+309, ItemClassification.progression),
+    "WorldFaith":ItemData(BASE_BUILDING_ID+310, ItemClassification.progression),
+    "WorldAppeal":ItemData(BASE_BUILDING_ID+311, ItemClassification.progression),
+    "WorldRelic":ItemData(BASE_BUILDING_ID+312, ItemClassification.progression),
+    "WorldUnit":ItemData(BASE_BUILDING_ID+313, ItemClassification.progression),
+    "WorldCoins":ItemData(BASE_BUILDING_ID+319, ItemClassification.progression),
+    "WorldBarracks":ItemData(BASE_BUILDING_ID+360, ItemClassification.progression),
+    "WorldArchery":ItemData(BASE_BUILDING_ID+361, ItemClassification.progression),
+    "WorldMages":ItemData(BASE_BUILDING_ID+362, ItemClassification.progression),
+    "WorldSummoners":ItemData(BASE_BUILDING_ID+363, ItemClassification.progression),
+    "WorldShards":ItemData(BASE_BUILDING_ID+507, ItemClassification.progression),
 
     # Useful items
     # "A good friend": ItemData(20050004, ItemClassification.useful),
