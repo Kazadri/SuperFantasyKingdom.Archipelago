@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from . import SFKWorld
 
 BASE_BUILDING_ID = 1_000_000
+BASE_UPGRADE_ID = 1_002_000
 
 def create_itempool(world: "SFKWorld") -> List[Item]:
     itempool: List[Item] = []
@@ -168,6 +169,21 @@ sfk_building_items = {
     # "A good friend": ItemData(20050004, ItemClassification.useful),
 }
 
+sfk_upgrade_items = {
+    "Wood upgrade": ItemData(BASE_UPGRADE_ID + 1, ItemClassification.useful),
+    "Well upgrade": ItemData(BASE_UPGRADE_ID + 3, ItemClassification.useful),
+    "Quarry upgrade": ItemData(BASE_UPGRADE_ID + 4, ItemClassification.useful),
+    "Farm upgrade": ItemData(BASE_UPGRADE_ID + 5, ItemClassification.useful),
+    "Mine upgrade": ItemData(BASE_UPGRADE_ID + 7, ItemClassification.useful),
+    "Port upgrade": ItemData(BASE_UPGRADE_ID + 9, ItemClassification.useful),
+    "Hunter upgrade": ItemData(BASE_UPGRADE_ID + 10, ItemClassification.useful),
+    "House upgrade": ItemData(BASE_UPGRADE_ID + 14, ItemClassification.useful),
+    "Geologist hunt upgrade": ItemData(BASE_UPGRADE_ID + 27, ItemClassification.useful),
+    "Decoration upgrade": ItemData(BASE_UPGRADE_ID + 30, ItemClassification.useful),
+    "Forager upgrade": ItemData(BASE_UPGRADE_ID + 35, ItemClassification.useful),
+    "Firsherhut upgrade": ItemData(BASE_UPGRADE_ID + 36, ItemClassification.useful),
+}
+
 # I like to split up the items so that its easier to look at and since sometimes you only need to look at one specific type of list
 # An example of that is in create_itempool where I simulated having a starting chapter
 sfk_chapters = {
@@ -198,6 +214,7 @@ item_table = {
     **sfk_geneal_items,
     **sfk_precollected_items,
     **sfk_building_items,
+    **sfk_upgrade_items,
     **sfk_chapters,
     **junk_items
 }
