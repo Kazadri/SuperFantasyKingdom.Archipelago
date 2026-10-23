@@ -34,7 +34,7 @@ class APSkeletonWeb(WebWorld):
 # This class is the real meat and potatoes
 # Same as the first class its normally named whatever you named your folder with World at the end
 class SFKWorld(World):
-    """Super Fantasy Kingdom : un rogue-lite de défense de château."""
+    """Super Fantasy Kingdom : a castle building roguelite."""
 
     game = "Super Fantasy Kingdom"
     item_name_to_id = {name: data.ap_code for name, data in item_table.items()}
@@ -61,6 +61,8 @@ class SFKWorld(World):
         self.multiworld.push_precollected(self.create_item(starting_chapter))
         for item in sfk_precollected_items.keys():
             self.multiworld.push_precollected(self.create_item(item))
+
+        self.multiworld.early_items[self.player]["Lumberyard"] = 1
 
     # Regions are the different locations in your world. So like Undead Burgh in dark souls or Pacifilog Town in pokemon
     # They dont have to match your game, they can be whatever you need them to be for organization

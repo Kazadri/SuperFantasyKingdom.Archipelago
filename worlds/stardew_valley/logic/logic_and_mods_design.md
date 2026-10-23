@@ -79,8 +79,8 @@ item with a foraging source is a forageable. Items can fit in multiple categorie
 For game mechanic that might need more logic/interaction than a simple game item, prefer creating a class than just listing the sources and adding generic
 requirements to them. This will simplify the implementation of more complex mechanics and increase cohesion.
 
-For instance, `Building` can be upgraded. Instead of having a simple source for the `Big Coop` being a shop source with an additional requirement being having
-the previous building, the `Building` class has knowledge of the upgrade system and know from which building it can be upgraded.
+For instance, `Buildings.py` can be upgraded. Instead of having a simple source for the `Big Coop` being a shop source with an additional requirement being having
+the previous building, the `Buildings.py` class has knowledge of the upgrade system and know from which building it can be upgraded.
 
 Another example is `Animal`. Instead of a shopping source with a requirement of having a `Coop`, the `Chicken` knows that a building is required. This way, a
 potential source of chicken from incubating an egg would not require an additional requirement of having a coop (assuming the incubator could be obtained

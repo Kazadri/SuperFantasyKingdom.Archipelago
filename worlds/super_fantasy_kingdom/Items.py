@@ -3,17 +3,15 @@
 # Built in AP imports
 from BaseClasses import Item, ItemClassification
 from .Regions import get_enabled_chapters
+from .Buildings import BUILDINGS, BASE_BUILDING_ID
 
 from .Types import ItemData, ChapterType, SFKItem, chapter_type_to_name
-from .Locations import get_total_locations, BASE_BUILDING_ID
+from .Locations import get_total_locations
 from typing import List, Dict, TYPE_CHECKING
 
 # This is just making sure nothing gets confused dw about what its doing exactly
 if TYPE_CHECKING:
     from . import SFKWorld
-
-BASE_BUILDING_ID = 1_000_000
-BASE_UPGRADE_ID = 1_002_000
 
 def create_itempool(world: "SFKWorld") -> List[Item]:
     itempool: List[Item] = []
@@ -43,13 +41,17 @@ def create_itempool(world: "SFKWorld") -> List[Item]:
         world.multiworld.get_location(name + "Victory", world.player).place_locked_item(victory)
 
     for name in item_table:
-        if name == "HumanVictory" or name == "UndeadVictory" or name in sfk_precollected_items:
+        if (name in ("HumanVictory", "UndeadVictory")
+                or name in sfk_precollected_items
+                or name in sfk_chapters
+                or name in junk_items):
             continue
         itempool.append(create_item(world, name))
 
     # Then junk items are made
     # Check out the create_junk_items function for more details
-    itempool += create_junk_items(world, get_total_locations(world) - len(itempool) - 1)
+    free = len(world.multiworld.get_unfilled_locations(world.player))
+    itempool += create_junk_items(world, free - len(itempool))
 
     return itempool
 
@@ -113,72 +115,38 @@ sfk_general_items = {
 }
 
 sfk_precollected_items = {
-    "Tavern":ItemData(BASE_BUILDING_ID+6, ItemClassification.progression),
+    b.name: ItemData(b.ap_code, b.classification)
+    for b in BUILDINGS.values() if b.precollected
 }
-# Time for the fun part of listing all of the items
-# Watch out for overlap with your item codes
-# These are just random numbers dont trust them PLEASE
-# I've seen some games that dynamically add item codes such as DOOM as well
-sfk_building_items = {
-    "Wood":ItemData(BASE_BUILDING_ID+1, ItemClassification.progression),
-    "Sawmill":ItemData(BASE_BUILDING_ID+2, ItemClassification.progression),
-    "Well":ItemData(BASE_BUILDING_ID+3, ItemClassification.progression),
-    "Quarry":ItemData(BASE_BUILDING_ID+4, ItemClassification.progression),
-    "Farm":ItemData(BASE_BUILDING_ID+5, ItemClassification.progression),
-    "Mine":ItemData(BASE_BUILDING_ID+7, ItemClassification.progression),
-    "Smelter":ItemData(BASE_BUILDING_ID+8, ItemClassification.progression),
-    "Port":ItemData(BASE_BUILDING_ID+9, ItemClassification.progression),
-    "Hunter":ItemData(BASE_BUILDING_ID+10, ItemClassification.progression),
-    "Windmill":ItemData(BASE_BUILDING_ID+11, ItemClassification.progression),
-    "Brewery":ItemData(BASE_BUILDING_ID+12, ItemClassification.progression),
-    "Siege":ItemData(BASE_BUILDING_ID+13, ItemClassification.progression),
-    "House":ItemData(BASE_BUILDING_ID+14, ItemClassification.progression),
-    "Stables":ItemData(BASE_BUILDING_ID+15, ItemClassification.progression),
-    "Graveyard":ItemData(BASE_BUILDING_ID+16, ItemClassification.progression),
-    "Portal":ItemData(BASE_BUILDING_ID+17, ItemClassification.progression),
-    "Bakery":ItemData(BASE_BUILDING_ID+18, ItemClassification.progression),
-    "Elemental":ItemData(BASE_BUILDING_ID+19, ItemClassification.progression),
-    "Geologist hunt": ItemData(BASE_BUILDING_ID+27, ItemClassification.progression),
-    "Decoration": ItemData(BASE_BUILDING_ID+30, ItemClassification.progression),
-    "Coins": ItemData(BASE_BUILDING_ID+32, ItemClassification.progression),
-    "Forager": ItemData(BASE_BUILDING_ID+35, ItemClassification.progression),
-    "Firsherhut": ItemData(BASE_BUILDING_ID+36, ItemClassification.progression),
-    "Monument": ItemData(BASE_BUILDING_ID+100, ItemClassification.progression),
-    "WorldWood":ItemData(BASE_BUILDING_ID+301, ItemClassification.progression),
-    "WorldStone":ItemData(BASE_BUILDING_ID+302, ItemClassification.progression),
-    "WorldWheat":ItemData(BASE_BUILDING_ID+303, ItemClassification.progression),
-    "WorldOre":ItemData(BASE_BUILDING_ID+304, ItemClassification.progression),
-    "WorldHunter":ItemData(BASE_BUILDING_ID+306, ItemClassification.progression),
-    "WorldBanish":ItemData(BASE_BUILDING_ID+307, ItemClassification.progression),
-    "WorldDifficulty":ItemData(BASE_BUILDING_ID+309, ItemClassification.progression),
-    "WorldFaith":ItemData(BASE_BUILDING_ID+310, ItemClassification.progression),
-    "WorldAppeal":ItemData(BASE_BUILDING_ID+311, ItemClassification.progression),
-    "WorldRelic":ItemData(BASE_BUILDING_ID+312, ItemClassification.progression),
-    "WorldUnit":ItemData(BASE_BUILDING_ID+313, ItemClassification.progression),
-    "WorldCoins":ItemData(BASE_BUILDING_ID+319, ItemClassification.progression),
-    "WorldBarracks":ItemData(BASE_BUILDING_ID+360, ItemClassification.progression),
-    "WorldArchery":ItemData(BASE_BUILDING_ID+361, ItemClassification.progression),
-    "WorldMages":ItemData(BASE_BUILDING_ID+362, ItemClassification.progression),
-    "WorldSummoners":ItemData(BASE_BUILDING_ID+363, ItemClassification.progression),
-    "WorldShards":ItemData(BASE_BUILDING_ID+507, ItemClassification.progression),
 
-    # Useful items
-    # "A good friend": ItemData(20050004, ItemClassification.useful),
+sfk_building_items = {
+    b.name: ItemData(b.ap_code, b.classification)
+    for b in BUILDINGS.values() if not b.precollected
+}
+
+sfk_outpost_items = {
+    "WorldWood": ItemData(BASE_BUILDING_ID + 301, ItemClassification.progression),
+    "WorldStone": ItemData(BASE_BUILDING_ID + 302, ItemClassification.progression),
+    "WorldWheat": ItemData(BASE_BUILDING_ID + 303, ItemClassification.progression),
+    "WorldOre": ItemData(BASE_BUILDING_ID + 304, ItemClassification.progression),
+    "WorldHunter": ItemData(BASE_BUILDING_ID + 306, ItemClassification.progression),
+    "WorldBanish": ItemData(BASE_BUILDING_ID + 307, ItemClassification.progression),
+    "WorldDifficulty": ItemData(BASE_BUILDING_ID + 309, ItemClassification.progression),
+    "WorldFaith": ItemData(BASE_BUILDING_ID + 310, ItemClassification.progression),
+    "WorldAppeal": ItemData(BASE_BUILDING_ID + 311, ItemClassification.progression),
+    "WorldRelic": ItemData(BASE_BUILDING_ID + 312, ItemClassification.progression),
+    "WorldUnit": ItemData(BASE_BUILDING_ID + 313, ItemClassification.progression),
+    "WorldCoins": ItemData(BASE_BUILDING_ID + 319, ItemClassification.progression),
+    "WorldBarracks": ItemData(BASE_BUILDING_ID + 360, ItemClassification.progression),
+    "WorldArchery": ItemData(BASE_BUILDING_ID + 361, ItemClassification.progression),
+    "WorldMages": ItemData(BASE_BUILDING_ID + 362, ItemClassification.progression),
+    "WorldSummoners": ItemData(BASE_BUILDING_ID + 363, ItemClassification.progression),
+    "WorldShards": ItemData(BASE_BUILDING_ID + 507, ItemClassification.progression),
 }
 
 sfk_upgrade_items = {
-    "Wood upgrade": ItemData(BASE_UPGRADE_ID + 1, ItemClassification.useful),
-    "Well upgrade": ItemData(BASE_UPGRADE_ID + 3, ItemClassification.useful),
-    "Quarry upgrade": ItemData(BASE_UPGRADE_ID + 4, ItemClassification.useful),
-    "Farm upgrade": ItemData(BASE_UPGRADE_ID + 5, ItemClassification.useful),
-    "Mine upgrade": ItemData(BASE_UPGRADE_ID + 7, ItemClassification.useful),
-    "Port upgrade": ItemData(BASE_UPGRADE_ID + 9, ItemClassification.useful),
-    "Hunter upgrade": ItemData(BASE_UPGRADE_ID + 10, ItemClassification.useful),
-    "House upgrade": ItemData(BASE_UPGRADE_ID + 14, ItemClassification.useful),
-    "Geologist hunt upgrade": ItemData(BASE_UPGRADE_ID + 27, ItemClassification.useful),
-    "Decoration upgrade": ItemData(BASE_UPGRADE_ID + 30, ItemClassification.useful),
-    "Forager upgrade": ItemData(BASE_UPGRADE_ID + 35, ItemClassification.useful),
-    "Firsherhut upgrade": ItemData(BASE_UPGRADE_ID + 36, ItemClassification.useful),
+    f"{b.name} upgrade": ItemData(b.upgrade_code, ItemClassification.useful)
+    for b in BUILDINGS.values() if b.has_upgrade
 }
 
 # I like to split up the items so that its easier to look at and since sometimes you only need to look at one specific type of list
@@ -211,6 +179,7 @@ item_table = {
     **sfk_general_items,
     **sfk_precollected_items,
     **sfk_building_items,
+    **sfk_outpost_items,
     **sfk_upgrade_items,
     **sfk_chapters,
     **junk_items
