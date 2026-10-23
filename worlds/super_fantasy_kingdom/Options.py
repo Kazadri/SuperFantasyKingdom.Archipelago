@@ -1,7 +1,7 @@
 ﻿from typing import List, Dict, Any
 from dataclasses import dataclass
 from worlds.AutoWorld import PerGameCommonOptions
-from Options import Choice, OptionGroup, Toggle, Range
+from Options import Choice, OptionGroup, Toggle, Range, OptionSet
 
 # If youve ever gone to an options page and seen how sometimes options are grouped
 # This is that
@@ -14,12 +14,9 @@ def create_option_groups() -> List[OptionGroup]:
 
 class StartingChapter(Choice):
     """
-    Determines which chapter you'll start with.
-    When you grab choice you'll get the associated number.
-    IE: If the player chooses the sewer then when you go to call StartingChapter you'll get 3
-    When displaying the options names on the site, _ will become spaces and the word option will go away.
+    Determines which race you'll start with.
     """
-    display_name = "Starting Chapter"
+    display_name = "Starting Race"
     option_human = 1
     option_undead = 2
     default = 1
@@ -29,6 +26,14 @@ class ExtraLocations(Toggle):
     This will enable the extra locations option. Toggle is just true or false.
     """
     display_name = "Add Extra Locations"
+
+class EnabledChapter(OptionSet):
+    """Enter the list of chapters to play.  Valid chapters are:
+        'Human'
+        'Undead'"""
+    display_name = "Races"
+    default = ["Human"]
+    valid_keys_casefold = False
 
 # class TrapChance(Range):
 #     """
@@ -64,6 +69,7 @@ class ExtraLocations(Toggle):
 @dataclass
 class SFKOptions(PerGameCommonOptions):
     StartingChapter:            StartingChapter
+    EnabledChapter:             EnabledChapter
     ExtraLocations:             ExtraLocations
     # TrapChance:                 TrapChance
     # ForcefemTrapWeight:         ForcefemTrapWeight
@@ -72,7 +78,8 @@ class SFKOptions(PerGameCommonOptions):
 # This is where you organize your options
 # Its entirely up to you how you want to organize it
 ap_skeleton_option_groups: Dict[str, List[Any]] = {
-    "General Options": [StartingChapter, ExtraLocations],
+    "General Options": [ExtraLocations],
+    "Race Options": [StartingChapter, EnabledChapter],
     # "Trap Options": [TrapChance, ForcefemTrapWeight, SpeedChangeTrapWeight]
     # "Trap Options": [TrapChance]
 }

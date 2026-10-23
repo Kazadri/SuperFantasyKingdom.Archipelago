@@ -1,10 +1,12 @@
 ﻿from BaseClasses import Region
-from .Types import SFKLocation
+from .Types import SFKLocation, ChapterType
 from .Locations import location_table, is_valid_location
 from typing import TYPE_CHECKING
+from collections.abc import Iterator
 
 if TYPE_CHECKING:
     from . import SFKWorld
+
 
 def create_regions(world: "SFKWorld"):
     menu = create_region(world, "Menu")
@@ -32,3 +34,7 @@ def create_region_and_connect(world: "SFKWorld",name: str, entrancename: str, co
     reg: Region = create_region(world, name)
     connected_region.connect(reg, entrancename)
     return reg
+
+def get_enabled_chapters(world: "SFKWorld") -> Iterator[ChapterType]:
+    for name in world.options.EnabledChapter.value:
+        yield ChapterType[name]

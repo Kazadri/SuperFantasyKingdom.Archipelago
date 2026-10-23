@@ -1,6 +1,8 @@
 ﻿from worlds.generic.Rules import add_rule
 from typing import TYPE_CHECKING
 from .Locations import sfk_building_locations
+from .Regions import get_enabled_chapters
+from .Types import chapter_type_to_name
 
 if TYPE_CHECKING:
     from . import SFKWorld
@@ -28,4 +30,8 @@ def set_rules(world: "SFKWorld"):
                  lambda state, n=loc_name: state.has(n, player))
 
     # Victory condition rule!
-    world.multiworld.completion_condition[player] = lambda state: state.has("HumanVictory", player) and state.has("UndeadVictory", player)
+    victory_items = [
+        chapter_type_to_name[chapter] + "Victory"
+        for chapter in get_enabled_chapters(world)
+    ]
+    world.multiworld.completion_condition[player] = lambda state: state.has_all(victory_items, player)
