@@ -3,7 +3,7 @@
 # Built in AP imports
 from BaseClasses import Item, ItemClassification
 from .Regions import get_enabled_chapters
-from .Buildings import BUILDINGS, BASE_BUILDING_ID
+from .Buildings import BUILDINGS, BASE_BUILDING_ID, BASE_ROAD_ID
 
 from .Types import ItemData, ChapterType, SFKItem, chapter_type_to_name
 from .Locations import get_total_locations
@@ -12,6 +12,9 @@ from typing import List, Dict, TYPE_CHECKING
 # This is just making sure nothing gets confused dw about what its doing exactly
 if TYPE_CHECKING:
     from . import SFKWorld
+
+OVERLAND_ROAD_COUNT = 70
+CITY_ROAD_COUNT = 21
 
 def create_itempool(world: "SFKWorld") -> List[Item]:
     itempool: List[Item] = []
@@ -44,9 +47,12 @@ def create_itempool(world: "SFKWorld") -> List[Item]:
         if (name in ("HumanVictory", "UndeadVictory")
                 or name in sfk_precollected_items
                 or name in sfk_chapters
-                or name in junk_items):
+                or name in junk_items
+                or name in sfk_road_items):
             continue
         itempool.append(create_item(world, name))
+
+    itempool += create_road_items(world)
 
     # Then junk items are made
     # Check out the create_junk_items function for more details
@@ -55,6 +61,12 @@ def create_itempool(world: "SFKWorld") -> List[Item]:
 
     return itempool
 
+def create_road_items(world: "SFKWorld") -> List[Item]:
+    road_item: List[Item] = []
+    road_item += create_multiple_items(world, "Progressive Overland Road", OVERLAND_ROAD_COUNT)
+    road_item += create_multiple_items(world, 'Progressive City Road', CITY_ROAD_COUNT)
+
+    return road_item
 
 # This is a generic function to create a singular item
 def create_item(world: "SFKWorld", name: str) -> Item:
@@ -63,13 +75,12 @@ def create_item(world: "SFKWorld", name: str) -> Item:
 
 
 # Another generic function. For creating a bunch of items at once!
-def create_multiple_items(world: "SFKWorld", name: str, count: int,
-                          item_type: ItemClassification = ItemClassification.progression) -> List[Item]:
+def create_multiple_items(world: "SFKWorld", name: str, count: int) -> List[Item]:
     data = item_table[name]
     itemlist: List[Item] = []
 
     for i in range(count):
-        itemlist += [SFKItem(name, item_type, data.ap_code, world.player)]
+        itemlist += [SFKItem(name, data.classification, data.ap_code, world.player)]
 
     return itemlist
 
@@ -149,6 +160,11 @@ sfk_upgrade_items = {
     for b in BUILDINGS.values() if b.has_upgrade
 }
 
+sfk_road_items = {
+    "Progressive Overland Road": ItemData(BASE_ROAD_ID+1, ItemClassification.useful),
+    "Progressive City Road": ItemData(BASE_ROAD_ID+2, ItemClassification.useful),
+}
+
 # I like to split up the items so that its easier to look at and since sometimes you only need to look at one specific type of list
 # An example of that is in create_itempool where I simulated having a starting chapter
 sfk_chapters = {
@@ -181,6 +197,7 @@ item_table = {
     **sfk_building_items,
     **sfk_outpost_items,
     **sfk_upgrade_items,
+    **sfk_road_items,
     **sfk_chapters,
     **junk_items
 }
