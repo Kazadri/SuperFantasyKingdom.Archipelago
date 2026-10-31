@@ -1,7 +1,8 @@
 ﻿from typing import List, Dict, Any
 from dataclasses import dataclass
 from worlds.AutoWorld import PerGameCommonOptions
-from Options import Choice, OptionGroup, Toggle, Range, OptionSet
+from Options import Choice, OptionGroup, Toggle, OptionSet
+from .Heroes import HERO_NAMES
 
 # If youve ever gone to an options page and seen how sometimes options are grouped
 # This is that
@@ -34,6 +35,41 @@ class EnabledChapter(OptionSet):
     display_name = "Races"
     default = ["Human"]
     valid_keys_casefold = False
+
+class StartingHero(Choice):
+    """
+    The hero you start with. Must be selected for your starting race.
+    Random picks one of the heroes enabled for your starting race.
+    """
+    display_name = "Starting Hero"
+    option_any_selected = 0
+    option_alaric = 1
+    option_cadus = 2
+    option_cole = 3
+    option_gideon = 4
+    option_grumdil = 5
+    option_mort = 6
+    option_qhela = 7
+    option_rickard = 8
+    option_selene = 9
+    option_sheva = 10
+    option_thea = 11
+    default = 0
+
+STARTING_HERO_NAMES = {i + 1: n for i, n in enumerate(HERO_NAMES)}
+
+class HumanHeroes(OptionSet):
+    """Heroes to play with when playing the Human race. Ignored if Human is not an enabled race."""
+    display_name = "Human Heroes"
+    valid_keys = sorted(HERO_NAMES)
+    default = sorted(HERO_NAMES)
+
+
+class UndeadHeroes(OptionSet):
+    """Heroes to play with when playing the Undead race. Ignored if Undead is not an enabled race."""
+    display_name = "Undead Heroes"
+    valid_keys = sorted(HERO_NAMES)
+    default = sorted(HERO_NAMES)
 
 # class TrapChance(Range):
 #     """
@@ -69,7 +105,10 @@ class EnabledChapter(OptionSet):
 @dataclass
 class SFKOptions(PerGameCommonOptions):
     StartingChapter:            StartingChapter
+    StartingHero:               StartingHero
     EnabledChapter:             EnabledChapter
+    HumanHeroes:                HumanHeroes
+    UndeadHeroes:               UndeadHeroes
     ExtraLocations:             ExtraLocations
     # TrapChance:                 TrapChance
     # ForcefemTrapWeight:         ForcefemTrapWeight
@@ -80,6 +119,7 @@ class SFKOptions(PerGameCommonOptions):
 ap_skeleton_option_groups: Dict[str, List[Any]] = {
     "General Options": [ExtraLocations],
     "Race Options": [StartingChapter, EnabledChapter],
+    "Hero Options": [StartingHero, HumanHeroes, UndeadHeroes],
     # "Trap Options": [TrapChance, ForcefemTrapWeight, SpeedChangeTrapWeight]
     # "Trap Options": [TrapChance]
 }

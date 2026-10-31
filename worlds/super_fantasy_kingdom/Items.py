@@ -2,11 +2,11 @@
 
 # Built in AP imports
 from BaseClasses import Item, ItemClassification
-from .Regions import get_enabled_chapters
 from .Buildings import BUILDINGS, BASE_BUILDING_ID, BASE_ROAD_ID
 
 from .Types import ItemData, ChapterType, SFKItem, chapter_type_to_name
-from .Locations import get_total_locations
+from .Heroes import HEROES, get_active_hero_names
+from .Regions import get_enabled_chapters
 from typing import List, Dict, TYPE_CHECKING
 
 # This is just making sure nothing gets confused dw about what its doing exactly
@@ -18,44 +18,27 @@ CITY_ROAD_COUNT = 21
 
 def create_itempool(world: "SFKWorld") -> List[Item]:
     itempool: List[Item] = []
-
-    # In this function is where you would remove any starting items that you add in options such as starting chapter
-    # This is also the place you would add dynamic amounts of items from options
-    # I can point to Sly Cooper and the Thievious Raccoonus since I did that
-
-    # This is a good place to grab anything you need from options
     starting_chapter = ChapterType(world.options.StartingChapter)
 
-    # For this example I'll make it so there is a starting chapter
-    # We loop through all the chapters in the my_chapter section
     for chapter in get_enabled_chapters(world):
-        # If the starting chapter equals the chapter we're looking at skip it
-        # We skip it since we dont want to add the chapter the player started with to the item pool
-        name = chapter_type_to_name[chapter]
-
-        print("-------------------------")
-        print(name)
-        print("-------------------------")
-
         if starting_chapter != chapter:
-            itempool.append(create_item(world, name))
+            itempool.append(create_item(world, chapter_type_to_name[chapter]))
 
-        victory = create_item(world, name + "Victory")
-        world.multiworld.get_location(name + "Victory", world.player).place_locked_item(victory)
+    for hero in get_active_hero_names(world):
+        if hero != world.starting_hero:
+            itempool.append(create_item(world, hero))
 
     for name in item_table:
-        if (name in ("HumanVictory", "UndeadVictory")
-                or name in sfk_precollected_items
+        if (name in sfk_precollected_items
                 or name in sfk_chapters
                 or name in junk_items
-                or name in sfk_road_items):
+                or name in sfk_road_items
+                or name in sfk_hero_items):
             continue
         itempool.append(create_item(world, name))
 
     itempool += create_road_items(world)
 
-    # Then junk items are made
-    # Check out the create_junk_items function for more details
     free = len(world.multiworld.get_unfilled_locations(world.player))
     itempool += create_junk_items(world, free - len(itempool))
 
@@ -120,11 +103,6 @@ def create_junk_items(world: "SFKWorld", count: int) -> List[Item]:
 
     return junk_pool
 
-sfk_general_items = {
-    "HumanVictory": ItemData(22050007, ItemClassification.progression),
-    "UndeadVictory": ItemData(22050008, ItemClassification.progression),
-}
-
 sfk_precollected_items = {
     b.name: ItemData(b.ap_code, b.classification)
     for b in BUILDINGS.values() if b.precollected
@@ -165,6 +143,11 @@ sfk_road_items = {
     "Progressive City Road": ItemData(BASE_ROAD_ID+2, ItemClassification.useful),
 }
 
+sfk_hero_items = {
+    h.name: ItemData(h.ap_code, ItemClassification.progression)
+    for h in HEROES.values()
+}
+
 # I like to split up the items so that its easier to look at and since sometimes you only need to look at one specific type of list
 # An example of that is in create_itempool where I simulated having a starting chapter
 sfk_chapters = {
@@ -192,12 +175,12 @@ junk_weights = {
 # This makes a really convenient list of all the other dictionaries
 # (fun fact: {} is a dictionary)
 item_table = {
-    **sfk_general_items,
     **sfk_precollected_items,
     **sfk_building_items,
     **sfk_outpost_items,
     **sfk_upgrade_items,
     **sfk_road_items,
+    **sfk_hero_items,
     **sfk_chapters,
     **junk_items
 }

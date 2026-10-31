@@ -6,10 +6,12 @@ from typing import Dict
 
 from .Locations import get_location_names, get_total_locations
 from .Items import create_item, create_itempool, item_table, sfk_precollected_items
-from .Options import SFKOptions
+from .Options import SFKOptions, STARTING_HERO_NAMES
+from Options import OptionError
 from .Regions import create_regions
 from .Types import ChapterType, chapter_type_to_name
 from .Rules import set_rules as apply_rules
+from .Heroes import get_active_heroes
 
 
 # This is where you setup the page on the site!
@@ -50,16 +52,31 @@ class SFKWorld(World):
     def __init__(self, multiworld: "MultiWorld", player: int):
         super().__init__(multiworld, player)
 
-    # Generate early you do things just before the generation
-    # Super important for doing things like adjusting the item pool based on options and the like
-    # Can technically be skipped if you dont need to do anything or if you handle it elsewhere like a short hike
     def generate_early(self):
-        # I highly recommend looking at other apworlds init files to see some examples
-        # sly1 (hey i did that), ahit, and bomb rush cyberfunk are some good ones
-        starting_chapter = chapter_type_to_name[ChapterType(self.options.StartingChapter)]
+        active = get_active_heroes(self)
+        start_race = chapter_type_to_name[ChapterType(self.options.StartingChapter)]
 
-        self.multiworld.push_precollected(self.create_item(starting_chapter))
-        for item in sfk_precollected_items.keys():
+        if start_race not in active:
+            raise OptionError(f"{self.player_name}: starting race {start_race} must be in EnabledChapter")
+
+        for race, heroes in active.items():
+            if not heroes:
+                raise OptionError(f"{self.player_name}: no hero selected for enabled race {race}")
+
+        start_value = self.options.StartingHero.value
+        if start_value == 0:  # random
+            self.starting_hero = self.random.choice(active[start_race])
+        else:
+            self.starting_hero = STARTING_HERO_NAMES[start_value]
+            if self.starting_hero not in active[start_race]:
+                raise OptionError(
+                    f"{self.player_name}: starting hero {self.starting_hero} "
+                    f"is not selected for the starting race {start_race}")
+
+        self.multiworld.push_precollected(self.create_item(start_race))
+        self.multiworld.push_precollected(self.create_item(self.starting_hero))
+
+        for item in sfk_precollected_items:
             self.multiworld.push_precollected(self.create_item(item))
 
         self.multiworld.early_items[self.player]["Lumberyard"] = 1
@@ -89,6 +106,7 @@ class SFKWorld(World):
             "options": {
                 "StartingPlace": self.options.StartingChapter.value,
                 "ExtraLocations": self.options.ExtraLocations.value,
+                "StartingHero": self.starting_hero,
                 # "TrapChance": self.options.TrapChance.value,
                 # "ForcefemTrapWeight": self.options.ForcefemTrapWeight.value,
                 # "SpeedChangeTrapWeight": self.options.SpeedChangeTrapWeight.value

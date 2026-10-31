@@ -1,8 +1,7 @@
 ﻿from worlds.generic.Rules import add_rule
 from typing import TYPE_CHECKING
 
-from .Regions import get_enabled_chapters
-from .Types import chapter_type_to_name
+from .Heroes import get_active_heroes, hero_race_name, victory_name
 from .Buildings import BUILDINGS
 
 if TYPE_CHECKING:
@@ -20,13 +19,15 @@ def set_rules(world: "SFKWorld"):
     player = world.player
     options = world.options
 
-    # Chapter + victory rules
     victory_items = []
-    for chapter in get_enabled_chapters(world):
-        name = chapter_type_to_name[chapter]
-        add_rule(world.multiworld.get_entrance(f"Menu -> {name}", player),
-                 lambda state, n=name: state.has(n, player))
-        victory_items.append(f"{name}Victory")
+    for race, heroes in get_active_heroes(world).items():
+        add_rule(world.multiworld.get_entrance(f"Menu -> {race}", player),
+                 lambda state, r=race: state.has(r, player))
+        for hero in heroes:
+            name = hero_race_name(race, hero)
+            add_rule(world.multiworld.get_entrance(f"{race} -> {name}", player),
+                     lambda state, h=hero: state.has(h, player))
+            victory_items.append(victory_name(race, hero))
 
     world.multiworld.completion_condition[player] = lambda state: state.has_all(victory_items, player)
 
