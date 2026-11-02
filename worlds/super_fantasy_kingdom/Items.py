@@ -7,6 +7,7 @@ from .Buildings import BUILDINGS, BASE_BUILDING_ID, BASE_ROAD_ID
 from .Types import ItemData, ChapterType, SFKItem, chapter_type_to_name
 from .Heroes import HEROES, get_active_hero_names
 from .Regions import get_enabled_chapters
+from .Pedestals import PEDESTALS, get_active_pedestals_names
 from typing import List, Dict, TYPE_CHECKING
 
 # This is just making sure nothing gets confused dw about what its doing exactly
@@ -28,12 +29,16 @@ def create_itempool(world: "SFKWorld") -> List[Item]:
         if hero != world.starting_hero:
             itempool.append(create_item(world, hero))
 
+    for pedestal in get_active_pedestals_names(world):
+        itempool.append(create_item(world, pedestal))
+
     for name in item_table:
         if (name in sfk_precollected_items
                 or name in sfk_chapters
                 or name in junk_items
                 or name in sfk_road_items
-                or name in sfk_hero_items):
+                or name in sfk_hero_items
+                or name in sfk_pedestal_items):
             continue
         itempool.append(create_item(world, name))
 
@@ -148,6 +153,11 @@ sfk_hero_items = {
     for h in HEROES.values()
 }
 
+sfk_pedestal_items = {
+    p.name: ItemData(p.ap_code, ItemClassification.useful)
+    for p in PEDESTALS.values()
+}
+
 # I like to split up the items so that its easier to look at and since sometimes you only need to look at one specific type of list
 # An example of that is in create_itempool where I simulated having a starting chapter
 sfk_chapters = {
@@ -181,6 +191,7 @@ item_table = {
     **sfk_upgrade_items,
     **sfk_road_items,
     **sfk_hero_items,
+    **sfk_pedestal_items,
     **sfk_chapters,
     **junk_items
 }
