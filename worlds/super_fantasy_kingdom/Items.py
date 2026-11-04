@@ -2,7 +2,7 @@
 
 # Built in AP imports
 from BaseClasses import Item, ItemClassification
-from .Buildings import BUILDINGS, BASE_BUILDING_ID, BASE_ROAD_ID
+from .Buildings import BUILDINGS, BASE_BUILDING_ID
 
 from .Types import ItemData, ChapterType, SFKItem, chapter_type_to_name
 from .Heroes import HEROES, get_active_hero_names
@@ -16,6 +16,10 @@ if TYPE_CHECKING:
 
 OVERLAND_ROAD_COUNT = 70
 CITY_ROAD_COUNT = 21
+WITCH_COUNT = 6
+
+BASE_ROAD_ID = 1_003_000
+BASE_WITCH_ID = 1_007_000
 
 def create_itempool(world: "SFKWorld") -> List[Item]:
     itempool: List[Item] = []
@@ -38,11 +42,13 @@ def create_itempool(world: "SFKWorld") -> List[Item]:
                 or name in junk_items
                 or name in sfk_road_items
                 or name in sfk_hero_items
-                or name in sfk_pedestal_items):
+                or name in sfk_pedestal_items
+                or name in sfk_witch_items):
             continue
         itempool.append(create_item(world, name))
 
     itempool += create_road_items(world)
+    itempool += create_witch_items(world)
 
     free = len(world.multiworld.get_unfilled_locations(world.player))
     itempool += create_junk_items(world, free - len(itempool))
@@ -55,6 +61,9 @@ def create_road_items(world: "SFKWorld") -> List[Item]:
     road_item += create_multiple_items(world, 'Progressive City Road', CITY_ROAD_COUNT)
 
     return road_item
+
+def create_witch_items(world: "SFKWorld") -> List[Item]:
+    return create_multiple_items(world, "Progressive Witch", WITCH_COUNT)
 
 # This is a generic function to create a singular item
 def create_item(world: "SFKWorld", name: str) -> Item:
@@ -158,6 +167,10 @@ sfk_pedestal_items = {
     for p in PEDESTALS.values()
 }
 
+sfk_witch_items = {
+    "Progressive Witch": ItemData(BASE_WITCH_ID, ItemClassification.useful),
+}
+
 # I like to split up the items so that its easier to look at and since sometimes you only need to look at one specific type of list
 # An example of that is in create_itempool where I simulated having a starting chapter
 sfk_chapters = {
@@ -192,6 +205,7 @@ item_table = {
     **sfk_road_items,
     **sfk_hero_items,
     **sfk_pedestal_items,
+    **sfk_witch_items,
     **sfk_chapters,
     **junk_items
 }

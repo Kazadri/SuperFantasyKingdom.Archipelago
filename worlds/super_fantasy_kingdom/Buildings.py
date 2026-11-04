@@ -5,7 +5,6 @@ from BaseClasses import ItemClassification
 
 BASE_BUILDING_ID = 1_000_000
 BASE_UPGRADE_ID = 1_002_000
-BASE_ROAD_ID = 1_003_000
 
 @dataclass(frozen=True)
 class Building:
