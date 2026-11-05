@@ -8,6 +8,7 @@ from .Types import ItemData, ChapterType, SFKItem, chapter_type_to_name
 from .Heroes import HEROES, get_active_hero_names
 from .Regions import get_enabled_chapters
 from .Pedestals import PEDESTALS, get_active_pedestals_names
+from .Resources import RESOURCES
 from typing import List, Dict, TYPE_CHECKING
 
 # This is just making sure nothing gets confused dw about what its doing exactly
@@ -179,20 +180,15 @@ sfk_chapters = {
 }
 
 junk_items = {
-    # Junk
-    "An Old Gamecube": ItemData(20050011, ItemClassification.filler, 0),
-    "Coughing Baby": ItemData(20050012, ItemClassification.filler, 0),
-
-    # Traps
-    # "Forcefem Trap": ItemData(20050013, ItemClassification.trap, 0),
-    # "Speed Change Trap": ItemData(20050014, ItemClassification.trap, 0)
+    r.name: ItemData(r.ap_code, ItemClassification.filler, 0)
+    for r in RESOURCES.values()
 }
 
 # Junk weights is just how often an item will be chosen when junk is being made
 # Bigger item = more likely to show up
 junk_weights = {
-    "An Old Gamecube": 40,
-    "Coughing Baby": 20
+    r.name: r.weight
+    for r in RESOURCES.values()
 }
 
 # This makes a really convenient list of all the other dictionaries
