@@ -33,5 +33,8 @@ def set_rules(world: "SFKWorld"):
 
     # Building requirements
     for b in BUILDINGS.values():
+        castle = b.castle_level_required()
         add_rule(world.multiworld.get_location(b.name, player),
-                 lambda state, req=b.requirements(): state.has_all(req, player))
+                 lambda state, req=b.requirements(), c=castle:
+                     state.has_all(req, player)
+                     and (c == 0 or state.has("Progressive Castle", player, c)))

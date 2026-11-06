@@ -18,9 +18,12 @@ if TYPE_CHECKING:
 OVERLAND_ROAD_COUNT = 70
 CITY_ROAD_COUNT = 21
 WITCH_COUNT = 6
+CASTLE_TIER_COUNT = 3
 
 BASE_ROAD_ID = 1_003_000
 BASE_WITCH_ID = 1_007_000
+BASE_CASTLE_ID = 1_008_000
+
 
 def create_itempool(world: "SFKWorld") -> List[Item]:
     itempool: List[Item] = []
@@ -44,12 +47,14 @@ def create_itempool(world: "SFKWorld") -> List[Item]:
                 or name in sfk_road_items
                 or name in sfk_hero_items
                 or name in sfk_pedestal_items
-                or name in sfk_witch_items):
+                or name in sfk_witch_items
+                or name in sfk_castle_items):
             continue
         itempool.append(create_item(world, name))
 
     itempool += create_road_items(world)
     itempool += create_witch_items(world)
+    itempool += create_castle_items(world)
 
     free = len(world.multiworld.get_unfilled_locations(world.player))
     itempool += create_junk_items(world, free - len(itempool))
@@ -62,6 +67,12 @@ def create_road_items(world: "SFKWorld") -> List[Item]:
     road_item += create_multiple_items(world, 'Progressive City Road', CITY_ROAD_COUNT)
 
     return road_item
+
+def create_castle_items(world: "SFKWorld") -> List[Item]:
+    items: List[Item] = []
+    for name in sfk_castle_items:
+        items += create_multiple_items(world, name, CASTLE_TIER_COUNT)
+    return items
 
 def create_witch_items(world: "SFKWorld") -> List[Item]:
     return create_multiple_items(world, "Progressive Witch", WITCH_COUNT)
@@ -154,8 +165,8 @@ sfk_upgrade_items = {
 }
 
 sfk_road_items = {
-    "Progressive Overland Road": ItemData(BASE_ROAD_ID+1, ItemClassification.useful),
-    "Progressive City Road": ItemData(BASE_ROAD_ID+2, ItemClassification.useful),
+    "Progressive Overland Road": ItemData(BASE_ROAD_ID + 1, ItemClassification.useful),
+    "Progressive City Road": ItemData(BASE_ROAD_ID + 2, ItemClassification.useful),
 }
 
 sfk_hero_items = {
@@ -170,6 +181,14 @@ sfk_pedestal_items = {
 
 sfk_witch_items = {
     "Progressive Witch": ItemData(BASE_WITCH_ID, ItemClassification.useful),
+}
+
+sfk_castle_items = {
+    "Progressive Castle": ItemData(BASE_CASTLE_ID + 0, ItemClassification.progression),
+    "Progressive Walls": ItemData(BASE_CASTLE_ID + 1, ItemClassification.useful),
+    "Progressive Gate": ItemData(BASE_CASTLE_ID + 2, ItemClassification.useful),
+    "Progressive Tower (Left)": ItemData(BASE_CASTLE_ID + 3, ItemClassification.useful),
+    "Progressive Tower (Right)": ItemData(BASE_CASTLE_ID + 4, ItemClassification.useful),
 }
 
 # I like to split up the items so that its easier to look at and since sometimes you only need to look at one specific type of list
@@ -202,6 +221,7 @@ item_table = {
     **sfk_hero_items,
     **sfk_pedestal_items,
     **sfk_witch_items,
+    **sfk_castle_items,
     **sfk_chapters,
     **junk_items
 }
