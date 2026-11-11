@@ -1,8 +1,9 @@
-﻿from worlds.generic.Rules import add_rule
+﻿from worlds.generic.Rules import add_rule, add_item_rule
 from typing import TYPE_CHECKING
 
 from .Heroes import get_active_heroes, hero_race_name, victory_name
 from .Buildings import BUILDINGS
+from .Units import UNITS, unit_location_name
 
 if TYPE_CHECKING:
     from . import SFKWorld
@@ -38,3 +39,9 @@ def set_rules(world: "SFKWorld"):
                  lambda state, req=b.requirements(), c=castle:
                      state.has_all(req, player)
                      and (c == 0 or state.has("Progressive Castle", player, c)))
+
+    # Unit requirements
+    for u in UNITS.values():
+        loc = world.multiworld.get_location(unit_location_name(u.name), player)
+        add_rule(loc, lambda state, n=u.name: state.has(n, player))
+        add_item_rule(loc, lambda item, n=u.name: not (item.player == player and item.name == n))

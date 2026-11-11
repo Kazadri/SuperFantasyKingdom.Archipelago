@@ -9,6 +9,7 @@ from .Heroes import HEROES, get_active_hero_names
 from .Regions import get_enabled_chapters
 from .Pedestals import PEDESTALS, get_active_pedestals_names
 from .Resources import RESOURCES
+from .Units import UNITS
 from typing import List, Dict, TYPE_CHECKING
 
 # This is just making sure nothing gets confused dw about what its doing exactly
@@ -48,13 +49,18 @@ def create_itempool(world: "SFKWorld") -> List[Item]:
                 or name in sfk_hero_items
                 or name in sfk_pedestal_items
                 or name in sfk_witch_items
-                or name in sfk_castle_items):
+                or name in sfk_castle_items
+                or name in sfk_unit_items):
             continue
         itempool.append(create_item(world, name))
 
     itempool += create_road_items(world)
     itempool += create_witch_items(world)
     itempool += create_castle_items(world)
+
+    for name in sfk_unit_items:
+        if name not in world.starting_units:
+            itempool.append(create_item(world, name))
 
     free = len(world.multiworld.get_unfilled_locations(world.player))
     itempool += create_junk_items(world, free - len(itempool))
@@ -191,6 +197,11 @@ sfk_castle_items = {
     "Progressive Tower (Right)": ItemData(BASE_CASTLE_ID + 4, ItemClassification.useful),
 }
 
+sfk_unit_items = {
+    u.name: ItemData(u.ap_code, ItemClassification.progression)
+    for u in UNITS.values()
+}
+
 # I like to split up the items so that its easier to look at and since sometimes you only need to look at one specific type of list
 # An example of that is in create_itempool where I simulated having a starting chapter
 sfk_chapters = {
@@ -222,6 +233,7 @@ item_table = {
     **sfk_pedestal_items,
     **sfk_witch_items,
     **sfk_castle_items,
+    **sfk_unit_items,
     **sfk_chapters,
     **junk_items
 }

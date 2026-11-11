@@ -3,6 +3,8 @@ from dataclasses import dataclass
 from worlds.AutoWorld import PerGameCommonOptions
 from Options import Choice, OptionGroup, Toggle, OptionSet
 from .Heroes import HERO_NAMES
+from .Units import UNITS
+
 
 # If youve ever gone to an options page and seen how sometimes options are grouped
 # This is that
@@ -13,6 +15,7 @@ def create_option_groups() -> List[OptionGroup]:
 
     return option_group_list
 
+
 class StartingChapter(Choice):
     """
     Determines which race you'll start with.
@@ -22,11 +25,13 @@ class StartingChapter(Choice):
     option_undead = 2
     default = 1
 
+
 class ExtraLocations(Toggle):
     """
     This will enable the extra locations option. Toggle is just true or false.
     """
     display_name = "Add Extra Locations"
+
 
 class EnabledChapter(OptionSet):
     """Enter the list of chapters to play.  Valid chapters are:
@@ -35,6 +40,7 @@ class EnabledChapter(OptionSet):
     display_name = "Races"
     default = ["Human"]
     valid_keys_casefold = False
+
 
 class StartingHero(Choice):
     """
@@ -56,7 +62,9 @@ class StartingHero(Choice):
     option_thea = 11
     default = 0
 
+
 STARTING_HERO_NAMES = {i + 1: n for i, n in enumerate(HERO_NAMES)}
+
 
 class HumanHeroes(OptionSet):
     """Heroes to play with when playing the Human race. Ignored if Human is not an enabled race."""
@@ -70,6 +78,30 @@ class UndeadHeroes(OptionSet):
     display_name = "Undead Heroes"
     valid_keys = sorted(HERO_NAMES)
     default = sorted(HERO_NAMES)
+
+
+class StartingUnitsMode(Choice):
+    """How the starting units are picked.
+    chosen: use the Starting Units option. random: pick 3 at random."""
+    display_name = "Starting Units Mode"
+    option_chosen = 0
+    option_randomized = 1
+    default = 1
+
+
+class StartingUnits(OptionSet):
+    """
+    The units you start with (only used when Starting Units Mode is 'chosen').
+
+    See the list of units on the
+    `wiki <https://wiki.hoodedhorse.com/Super_Fantasy_Kingdom/Units>`_.
+
+    Elemental unit are not handled.
+    """
+    display_name = "Starting Units"
+    valid_keys = sorted(UNITS.keys())
+    default = frozenset({"Archer", "Cyclops", "Runescribe"})
+
 
 # class TrapChance(Range):
 #     """
@@ -104,15 +136,18 @@ class UndeadHeroes(OptionSet):
 
 @dataclass
 class SFKOptions(PerGameCommonOptions):
-    StartingChapter:            StartingChapter
-    StartingHero:               StartingHero
-    EnabledChapter:             EnabledChapter
-    HumanHeroes:                HumanHeroes
-    UndeadHeroes:               UndeadHeroes
-    ExtraLocations:             ExtraLocations
+    StartingChapter: StartingChapter
+    StartingHero: StartingHero
+    EnabledChapter: EnabledChapter
+    HumanHeroes: HumanHeroes
+    UndeadHeroes: UndeadHeroes
+    StartingUnitsMode: StartingUnitsMode
+    StartingUnits: StartingUnits
+    ExtraLocations: ExtraLocations
     # TrapChance:                 TrapChance
     # ForcefemTrapWeight:         ForcefemTrapWeight
     # SpeedChangeTrapWeight:      SpeedChangeTrapWeight
+
 
 # This is where you organize your options
 # Its entirely up to you how you want to organize it
@@ -120,6 +155,7 @@ ap_skeleton_option_groups: Dict[str, List[Any]] = {
     "General Options": [ExtraLocations],
     "Race Options": [StartingChapter, EnabledChapter],
     "Hero Options": [StartingHero, HumanHeroes, UndeadHeroes],
+    "Unit Options": [StartingUnitsMode, StartingUnits]
     # "Trap Options": [TrapChance, ForcefemTrapWeight, SpeedChangeTrapWeight]
     # "Trap Options": [TrapChance]
 }

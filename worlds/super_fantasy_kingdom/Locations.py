@@ -1,5 +1,5 @@
 ﻿from typing import Dict, TYPE_CHECKING
-import logging
+from .Units import UNITS, unit_location_name
 
 from .Types import LocData
 from .Buildings import BUILDINGS
@@ -42,10 +42,16 @@ sfk_building_locations = {
     b.name: LocData(b.ap_code, b.region) for b in BUILDINGS.values()
 }
 
+sfk_unit_locations = {
+    unit_location_name(u.name): LocData(u.ap_code, "Menu")
+    for u in UNITS.values()
+}
+
 extra_locations = {
 }
 
 location_table = {
     **sfk_building_locations,
+    **sfk_unit_locations,
     **extra_locations,
 }

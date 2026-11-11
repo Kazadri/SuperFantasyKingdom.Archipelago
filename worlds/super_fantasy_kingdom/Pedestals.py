@@ -6,7 +6,6 @@ if TYPE_CHECKING:
 
 BASE_PEDESTAL_ID = 1_006_000
 
-
 @dataclass(frozen=True)
 class Pedestal:
     name: str

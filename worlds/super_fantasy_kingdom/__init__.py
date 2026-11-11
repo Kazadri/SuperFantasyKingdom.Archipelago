@@ -12,6 +12,7 @@ from .Regions import create_regions
 from .Types import ChapterType, chapter_type_to_name
 from .Rules import set_rules as apply_rules
 from .Heroes import get_active_heroes
+from .Units import pick_starting_units
 
 
 # This is where you setup the page on the site!
@@ -76,6 +77,10 @@ class SFKWorld(World):
         self.multiworld.push_precollected(self.create_item(start_race))
         self.multiworld.push_precollected(self.create_item(self.starting_hero))
 
+        self.starting_units = pick_starting_units(self)
+        for name in self.starting_units:
+            self.multiworld.push_precollected(self.create_item(name))
+
         for item in sfk_precollected_items:
             self.multiworld.push_precollected(self.create_item(item))
 
@@ -107,6 +112,7 @@ class SFKWorld(World):
                 "StartingPlace": self.options.StartingChapter.value,
                 "ExtraLocations": self.options.ExtraLocations.value,
                 "StartingHero": self.starting_hero,
+                "StartingUnits": self.starting_units,
                 # "TrapChance": self.options.TrapChance.value,
                 # "ForcefemTrapWeight": self.options.ForcefemTrapWeight.value,
                 # "SpeedChangeTrapWeight": self.options.SpeedChangeTrapWeight.value
