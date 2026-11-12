@@ -19,11 +19,13 @@ if TYPE_CHECKING:
 OVERLAND_ROAD_COUNT = 70
 CITY_ROAD_COUNT = 21
 WITCH_COUNT = 6
+KINGDOM_LEVEL_COUNT = 43
 CASTLE_TIER_COUNT = 3
 
 BASE_ROAD_ID = 1_003_000
 BASE_WITCH_ID = 1_007_000
 BASE_CASTLE_ID = 1_008_000
+BASE_KINGDOM_LEVEL_ID = 1_010_000
 
 
 def create_itempool(world: "SFKWorld") -> List[Item]:
@@ -48,7 +50,7 @@ def create_itempool(world: "SFKWorld") -> List[Item]:
                 or name in sfk_road_items
                 or name in sfk_hero_items
                 or name in sfk_pedestal_items
-                or name in sfk_witch_items
+                or name in sfk_progressive_items
                 or name in sfk_castle_items
                 or name in sfk_unit_items):
             continue
@@ -57,6 +59,7 @@ def create_itempool(world: "SFKWorld") -> List[Item]:
     itempool += create_road_items(world)
     itempool += create_witch_items(world)
     itempool += create_castle_items(world)
+    itempool += create_kingdom_level_items(world)
 
     for name in sfk_unit_items:
         if name not in world.starting_units:
@@ -82,6 +85,9 @@ def create_castle_items(world: "SFKWorld") -> List[Item]:
 
 def create_witch_items(world: "SFKWorld") -> List[Item]:
     return create_multiple_items(world, "Progressive Witch", WITCH_COUNT)
+
+def create_kingdom_level_items(world: "SFKWorld") -> List[Item]:
+    return create_multiple_items(world, "Progressive Kingdom Level", KINGDOM_LEVEL_COUNT)
 
 # This is a generic function to create a singular item
 def create_item(world: "SFKWorld", name: str) -> Item:
@@ -185,8 +191,9 @@ sfk_pedestal_items = {
     for p in PEDESTALS.values()
 }
 
-sfk_witch_items = {
+sfk_progressive_items = {
     "Progressive Witch": ItemData(BASE_WITCH_ID, ItemClassification.useful),
+    "Progressive Kingdom Level": ItemData(BASE_KINGDOM_LEVEL_ID, ItemClassification.useful),
 }
 
 sfk_castle_items = {
@@ -231,7 +238,7 @@ item_table = {
     **sfk_road_items,
     **sfk_hero_items,
     **sfk_pedestal_items,
-    **sfk_witch_items,
+    **sfk_progressive_items,
     **sfk_castle_items,
     **sfk_unit_items,
     **sfk_chapters,
