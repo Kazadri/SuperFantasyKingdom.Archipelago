@@ -14,6 +14,8 @@ class Unit:
     def ap_code(self) -> int:
         return BASE_UNIT_ID + self.offset
 
+# APPEND ONLY: the offset is part of the Archipelago ID.
+# Elementals and constructs (no upgrade tiers in the game) are ignored for now.
 _UNIT_LIST = [
     Unit("Abomination", 0, "Undead"),
     Unit("Angel", 1, "Human"),
@@ -50,23 +52,27 @@ _UNIT_LIST = [
     Unit("Marksman", 32, "Dwarven"),
     Unit("Mechanic", 33, "Dwarven"),
     Unit("Miner", 34, "Dwarven"),
-    Unit("Observer", 35, "Desert"),
-    Unit("Paladin", 36, "Human"),
-    Unit("Pixie", 37, "Nature"),
-    Unit("Psion", 38, "Swamp"),
-    Unit("Rogue", 39, "Elven"),
-    Unit("Runescribe", 40, "Dwarven"),
-    Unit("Satyr", 41, "Nature"),
-    Unit("Shaman", 42, "Barbarian"),
-    Unit("Shroom", 43, "Swamp"),
-    Unit("Stormcaller", 44, "Barbarian"),
-    Unit("Succubus", 45, "Demon"),
-    Unit("Swordsman", 46, "Human"),
-    Unit("Treant", 47, "Nature"),
-    Unit("Troll", 48, "Barbarian"),
-    Unit("Vampire", 49, "Undead"),
-    Unit("Werewolf", 50, "Nature"),
-    Unit("Yeti", 51, "Elven"),
+    Unit("Monk", 35, "Human"),
+    Unit("Observer", 36, "Desert"),
+    Unit("Paladin", 37, "Human"),
+    Unit("Pixie", 38, "Nature"),
+    Unit("Psion", 39, "Swamp"),
+    Unit("Rogue", 40, "Elven"),
+    Unit("Runescribe", 41, "Dwarven"),
+    Unit("Satyr", 42, "Nature"),
+    Unit("Shaman", 43, "Barbarian"),
+    Unit("Shroom", 44, "Swamp"),
+    Unit("Stormcaller", 45, "Barbarian"),
+    Unit("Succubus", 46, "Demon"),
+    Unit("Swordsman", 47, "Human"),
+    Unit("Treant", 48, "Nature"),
+    Unit("Troll", 49, "Barbarian"),
+    Unit("Vampire", 50, "Undead"),
+    Unit("Werewolf", 51, "Nature"),
+    Unit("Yeti", 52, "Elven"),
+    Unit("Efreet", 53, "Demon"),
+    Unit("Minotaur", 54, "Barbarian"),
+    Unit("Spearman", 55, "Human"),
 ]
 
 UNITS: Dict[str, Unit] = {u.name: u for u in _UNIT_LIST}

@@ -1,6 +1,7 @@
 ﻿from typing import Dict, TYPE_CHECKING
-from .Units import UNITS, unit_location_name
 
+from .Units import UNITS, unit_location_name
+from .Relics import RELICS
 from .Types import LocData
 from .Buildings import BUILDINGS
 from .Heroes import RACES, HERO_NAMES, hero_day_name, hero_day_code, get_active_heroes, DAY_COUNT
@@ -27,6 +28,10 @@ def is_valid_location(world: "SFKWorld", name) -> bool:
     if not did_include_extra_locations(world) and name in extra_locations:
         return False
 
+    data = location_table.get(name)
+    if data is not None and data.region in RACES and data.region not in world.options.EnabledChapter.value:
+        return False
+
     return True
 
 def all_hero_day_locations() -> Dict[str, int]:
@@ -47,11 +52,17 @@ sfk_unit_locations = {
     for u in UNITS.values()
 }
 
+sfk_relic_locations = {
+    r.location_name: LocData(r.ap_code, r.race or "Menu")
+    for r in RELICS.values()
+}
+
 extra_locations = {
 }
 
 location_table = {
     **sfk_building_locations,
     **sfk_unit_locations,
+    **sfk_relic_locations,
     **extra_locations,
 }

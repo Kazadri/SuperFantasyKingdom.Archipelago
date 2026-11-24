@@ -1,6 +1,7 @@
 ﻿from worlds.generic.Rules import add_rule, add_item_rule
 from typing import TYPE_CHECKING
 
+from .Relics import RELICS
 from .Heroes import get_active_heroes, hero_race_name, victory_name
 from .Buildings import BUILDINGS
 from .Units import UNITS, unit_location_name
@@ -8,14 +9,15 @@ from .Units import UNITS, unit_location_name
 if TYPE_CHECKING:
     from . import SFKWorld
 
+def building_rule(b, player):
+    castle = b.castle_level_required()
+    req = b.requirements()
+    return lambda state: (
+        state.has(b.name, player)
+        and state.has_all(req, player)
+        and (castle == 0 or state.has("Progressive Castle", player, castle))
+    )
 
-# This is the last big thing to do (at least for me)
-# This is where you add item
-# These are omega simplified rules
-# There are a ton of different ways you can add rules from amount of items you need to optional items
-# Theres also difficulty options and a bunch others
-# Id suggest going through a bunch of different ap worlds and seeing how they do the rules
-# Even better if its a game you know a lot about and can tell what you need to get to certain locations
 def set_rules(world: "SFKWorld"):
     player = world.player
     options = world.options
@@ -34,14 +36,22 @@ def set_rules(world: "SFKWorld"):
 
     # Building requirements
     for b in BUILDINGS.values():
-        castle = b.castle_level_required()
-        add_rule(world.multiworld.get_location(b.name, player),
-                 lambda state, req=b.requirements(), c=castle:
-                     state.has_all(req, player)
-                     and (c == 0 or state.has("Progressive Castle", player, c)))
+        add_rule(world.multiworld.get_location(b.name, player), building_rule(b, player))
 
     # Unit requirements
     for u in UNITS.values():
         loc = world.multiworld.get_location(unit_location_name(u.name), player)
         add_rule(loc, lambda state, n=u.name: state.has(n, player))
         add_item_rule(loc, lambda item, n=u.name: not (item.player == player and item.name == n))
+
+    # Relic requirements
+    active_races = options.EnabledChapter.value
+    buildings_by_name = {b.name: b for b in BUILDINGS.values()}
+    for r in RELICS.values():
+        if r.race is not None and r.race not in active_races:
+            continue  # location not created for this seed
+        loc = world.multiworld.get_location(r.location_name, player)
+        for bname in r.buildings:
+            add_rule(loc, building_rule(buildings_by_name[bname], player))
+        if r.units:
+            add_rule(loc, lambda state, req=r.units: state.has_all(req, player))
